@@ -5,7 +5,20 @@ Options -Indexes
     Require all denied
 </FilesMatch>
 
-# Route all requests through public/
 RewriteEngine On
-RewriteCond %{REQUEST_URI} !^/public/
+RewriteBase /
+
+# Already targeting /public/ directly — leave as-is
+RewriteCond %{REQUEST_URI} ^/public/
+RewriteRule ^ - [L]
+
+# Static file exists in public/ — serve it
+RewriteCond %{DOCUMENT_ROOT}/public%{REQUEST_URI} -f
 RewriteRule ^(.*)$ public/$1 [L,QSA]
+
+# Static directory exists in public/ — serve it
+RewriteCond %{DOCUMENT_ROOT}/public%{REQUEST_URI} -d
+RewriteRule ^(.*)$ public/$1 [L,QSA]
+
+# Everything else goes through the front controller
+RewriteRule ^(.*)$ public/index.php [L,QSA]
