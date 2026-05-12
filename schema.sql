@@ -208,6 +208,7 @@ CREATE TABLE IF NOT EXISTS import_batches (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Liaison import_batches ← guests
+ALTER TABLE guests DROP FOREIGN KEY IF EXISTS fk_guests_import;
 ALTER TABLE guests
     ADD CONSTRAINT fk_guests_import
     FOREIGN KEY (import_batch_id) REFERENCES import_batches(id) ON DELETE SET NULL;
