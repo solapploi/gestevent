@@ -239,7 +239,7 @@ CREATE TABLE audit_logs (
 -- Hash bcrypt de 'ChangeMe2024!'
 INSERT INTO users (name, email, password_hash, role) VALUES (
     'Super Admin',
-    'admin@votredomaine.com',
-    '$2y$12$placeholderHashARemplacerAvantMiseEnProd000000000000000',
+    'admin@gestevent.solappli.com',
+    '$2y$12$6bGNgIRrKFBgXoTGORrcBubxTzXzCCQnhkSWECKODuF7fwYOoMclK',
     'super_admin'
 );

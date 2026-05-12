@@ -32,11 +32,11 @@ class AuthController
 
         $db   = Database::getInstance();
         $user = $db->fetchOne(
-            'SELECT id, name, email, password, role FROM users WHERE email = ? LIMIT 1',
+            'SELECT id, name, email, password_hash, role FROM users WHERE email = ? LIMIT 1',
             [$email]
         );
 
-        if ($user === false || !password_verify($password, $user['password'])) {
+        if ($user === false || !password_verify($password, $user['password_hash'])) {
             Session::flash('login_error', 'Identifiants incorrects.');
             Response::redirect('/login');
         }
