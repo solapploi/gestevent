@@ -1,0 +1,157 @@
+evenement-app/
+├── public/                          # Seul dossier exposé par le serveur web
+│   ├── index.php                    # Front controller unique
+│   ├── .htaccess                    # Réécriture URL → index.php
+│   ├── manifest.json                # PWA manifest (scanner)
+│   ├── sw.js                        # Service Worker (offline scan)
+│   └── assets/
+│       ├── css/
+│       │   ├── app.css              # Design system global
+│       │   ├── backoffice.css       # Styles backoffice
+│       │   └── scanner.css          # Styles PWA scanner (mobile-first)
+│       ├── js/
+│       │   ├── app.js               # JS global (CSRF, helpers)
+│       │   ├── scanner.js           # Caméra + jsQR + Web Audio API
+│       │   └── qrcode.min.js        # Lib affichage QR côté client
+│       └── icons/                   # Icônes PWA (192x192, 512x512)
+│
+├── src/                             # Code applicatif (non exposé)
+│   ├── Core/
+│   │   ├── App.php                  # Bootstrap : routeur, container
+│   │   ├── Router.php               # Routage URL → Controller::method
+│   │   ├── Request.php              # Encapsule $_GET, $_POST, $_FILES
+│   │   ├── Response.php             # Helpers redirect, json, render
+│   │   ├── Database.php             # Singleton PDO + helpers query
+│   │   ├── Session.php              # Gestion session sécurisée
+│   │   ├── Auth.php                 # Vérif rôles, guards
+│   │   ├── Mailer.php               # Wrapper PHPMailer
+│   │   ├── QrCodeService.php        # Génération token HMAC + image QR
+│   │   ├── AuditLogger.php          # Écriture audit_logs
+│   │   └── CsrfToken.php            # Génération / validation token CSRF
+│   │
+│   ├── Controllers/
+│   │   ├── AuthController.php       # Login, logout
+│   │   ├── DashboardController.php  # Accueil backoffice (stats rapides)
+│   │   │
+│   │   ├── EventController.php      # CRUD événements (super_admin)
+│   │   ├── EventAdminController.php # Affectation admins à un événement
+│   │   │
+│   │   ├── GuestController.php      # Liste invités, modération, fiche
+│   │   ├── GuestImportController.php# Import CSV/Excel
+│   │   ├── GuestExportController.php# Export CSV / PDF
+│   │   │
+│   │   ├── RegistrationController.php  # Page publique inscription invité
+│   │   ├── ResponseController.php      # Page réponse invité (lien tokenisé)
+│   │   ├── InvitationController.php    # Page "Mon invitation" + QR Code
+│   │   │
+│   │   ├── ScannerController.php    # PWA scanner (vue + API endpoint)
+│   │   ├── ScanApiController.php    # POST /api/scan → validation QR (JSON)
+│   │   │
+│   │   ├── StatsController.php      # Dashboard statistiques par événement
+│   │   └── UserController.php       # CRUD utilisateurs (super_admin)
+│   │
+│   ├── Models/
+│   │   ├── User.php
+│   │   ├── Event.php
+│   │   ├── EventAdmin.php
+│   │   ├── Guest.php
+│   │   ├── GuestResponse.php
+│   │   ├── QrToken.php
+│   │   ├── ScanLog.php
+│   │   ├── ImportBatch.php
+│   │   └── AuditLog.php
+│   │
+│   ├── Services/
+│   │   ├── ModerationService.php    # Valider/rejeter + envoi email
+│   │   ├── ConfirmationService.php  # Générer QR + email récap
+│   │   ├── ReminderService.php      # Cron : relances 48h
+│   │   ├── ImportService.php        # Parse CSV/Excel, mapping colonnes
+│   │   ├── ExportService.php        # Génération CSV + PDF
+│   │   ├── StatsService.php         # Calculs statistiques événement
+│   │   └── NotificationService.php  # SSE ou polling admin temps réel
+│   │
+│   └── Middleware/
+│       ├── AuthMiddleware.php       # Vérifie session active
+│       ├── RoleMiddleware.php       # Vérifie rôle requis
+│       ├── CsrfMiddleware.php       # Valide token CSRF sur POST
+│       └── RateLimitMiddleware.php  # Limite requêtes par IP
+│
+├── views/                           # Templates PHP (pas de moteur tiers)
+│   ├── layout/
+│   │   ├── backoffice.php           # Layout principal backoffice
+│   │   ├── public.php               # Layout pages publiques
+│   │   └── scanner.php              # Layout PWA scanner (minimal)
+│   │
+│   ├── auth/
+│   │   └── login.php
+│   │
+│   ├── dashboard/
+│   │   └── index.php                # Vue d'ensemble multi-événements
+│   │
+│   ├── events/
+│   │   ├── list.php
+│   │   ├── create.php
+│   │   ├── edit.php
+│   │   └── show.php                 # Détail événement + onglets
+│   │
+│   ├── guests/
+│   │   ├── list.php                 # Liste avec filtres + actions groupées
+│   │   ├── moderation.php           # File de modération (pending)
+│   │   ├── show.php                 # Fiche invité complète
+│   │   └── import.php               # Interface import CSV
+│   │
+│   ├── registration/
+│   │   ├── form.php                 # Page publique inscription
+│   │   ├── success.php              # Confirmation soumission
+│   │   └── closed.php               # Inscriptions fermées
+│   │
+│   ├── response/
+│   │   ├── form.php                 # Formulaire réponse invité
+│   │   └── thank_you.php
+│   │
+│   ├── invitation/
+│   │   └── show.php                 # Page "Mon invitation" + QR Code
+│   │
+│   ├── scanner/
+│   │   └── index.php                # PWA scanner (plein écran mobile)
+│   │
+│   ├── stats/
+│   │   └── index.php                # Dashboard stats + graphiques
+│   │
+│   └── users/
+│       ├── list.php
+│       └── form.php
+│
+├── templates/                       # Emails HTML
+│   ├── emails/
+│   │   ├── base.html                # Layout email (compatible clients mail)
+│   │   ├── confirmation_request.html # Email post-validation admin
+│   │   ├── qrcode_delivery.html     # Email avec QR Code en pièce jointe
+│   │   ├── reminder.html            # Relance 48h sans réponse
+│   │   ├── rejection.html           # Notification refus
+│   │   └── waitlist_promoted.html   # Promu de liste d'attente
+│
+├── storage/
+│   ├── qrcodes/                     # QR Codes générés (PNG temporaires)
+│   ├── imports/                     # Fichiers CSV uploadés (temporaire)
+│   ├── exports/                     # Fichiers générés pour téléchargement
+│   └── logs/
+│       ├── app.log
+│       └── error.log
+│
+├── cron/
+│   ├── send_reminders.php           # Relances 48h (cron quotidien)
+│   └── cleanup_storage.php          # Nettoyage fichiers temporaires
+│
+├── config/
+│   ├── app.php                      # Config générale (nom app, URL, timezone)
+│   ├── database.php                 # DSN, credentials (lus depuis .env)
+│   ├── mail.php                     # SMTP config
+│   └── security.php                 # HMAC secret, durée tokens, rate limits
+│
+├── vendor/                          # Composer (gitignored)
+├── composer.json
+├── .env                             # Variables sensibles (gitignored)
+├── .env.example                     # Template .env commité
+├── .gitignore
+└── CLAUDE.md                        # Contexte Claude Code (voir fichier dédié)

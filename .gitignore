@@ -1,0 +1,17 @@
+/vendor/
+/.env
+/storage/qrcodes/*
+/storage/imports/*
+/storage/exports/*
+/storage/logs/*
+!/storage/qrcodes/.gitkeep
+!/storage/imports/.gitkeep
+!/storage/exports/.gitkeep
+!/storage/logs/.gitkeep
+!/public/assets/icons/.gitkeep
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+/tests/coverage/
+*.cache
