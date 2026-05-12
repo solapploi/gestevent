@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Core\Request;
+use App\Core\Response;
 
 class DashboardController
 {
@@ -16,6 +17,9 @@ class DashboardController
 
     public function index(Request $request): void
     {
-        // TODO: dashboard backoffice
+        Response::render('dashboard/index', [
+            'user_name' => $_SESSION['user_name'] ?? '',
+            'user_role' => $_SESSION['user_role'] ?? '',
+        ]);
     }
 }
