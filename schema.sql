@@ -5,11 +5,12 @@
 
 SET NAMES utf8mb4;
 SET time_zone = '+00:00';
+SET FOREIGN_KEY_CHECKS = 0;
 
 -- -------------------------------------------------------------
 --  1. UTILISATEURS (backoffice)
 -- -------------------------------------------------------------
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id            INT UNSIGNED    NOT NULL AUTO_INCREMENT,
     name          VARCHAR(100)    NOT NULL,
     email         VARCHAR(180)    NOT NULL UNIQUE,
@@ -26,7 +27,7 @@ CREATE TABLE users (
 -- -------------------------------------------------------------
 --  2. ÉVÉNEMENTS
 -- -------------------------------------------------------------
-CREATE TABLE events (
+CREATE TABLE IF NOT EXISTS events (
     id              INT UNSIGNED    NOT NULL AUTO_INCREMENT,
     slug            VARCHAR(120)    NOT NULL UNIQUE,   -- URL publique : /inscription/{slug}
     name            VARCHAR(200)    NOT NULL,
@@ -55,7 +56,7 @@ CREATE TABLE events (
 -- -------------------------------------------------------------
 --  3. ADMINS PAR ÉVÉNEMENT (pivot multi-admin)
 -- -------------------------------------------------------------
-CREATE TABLE event_admins (
+CREATE TABLE IF NOT EXISTS event_admins (
     event_id    INT UNSIGNED    NOT NULL,
     user_id     INT UNSIGNED    NOT NULL,
     -- Niveau de droits sur cet événement
@@ -71,7 +72,7 @@ CREATE TABLE event_admins (
 -- -------------------------------------------------------------
 --  4. INVITÉS
 -- -------------------------------------------------------------
-CREATE TABLE guests (
+CREATE TABLE IF NOT EXISTS guests (
     id              INT UNSIGNED    NOT NULL AUTO_INCREMENT,
     event_id        INT UNSIGNED    NOT NULL,
     first_name      VARCHAR(100)    NOT NULL,
@@ -117,7 +118,7 @@ CREATE TABLE guests (
 -- -------------------------------------------------------------
 --  5. RÉPONSES INVITÉS (participation + options)
 -- -------------------------------------------------------------
-CREATE TABLE guest_responses (
+CREATE TABLE IF NOT EXISTS guest_responses (
     id              INT UNSIGNED    NOT NULL AUTO_INCREMENT,
     guest_id        INT UNSIGNED    NOT NULL UNIQUE,  -- 1 réponse par invité
     attending       TINYINT(1)      NOT NULL,          -- 1 = présent, 0 = absent
@@ -134,7 +135,7 @@ CREATE TABLE guest_responses (
 -- -------------------------------------------------------------
 --  6. TOKENS QR CODE
 -- -------------------------------------------------------------
-CREATE TABLE qr_tokens (
+CREATE TABLE IF NOT EXISTS qr_tokens (
     id              INT UNSIGNED    NOT NULL AUTO_INCREMENT,
     guest_id        INT UNSIGNED    NOT NULL,
     event_id        INT UNSIGNED    NOT NULL,
@@ -162,7 +163,7 @@ CREATE TABLE qr_tokens (
 -- -------------------------------------------------------------
 --  7. LOGS DE SCAN (historique complet)
 -- -------------------------------------------------------------
-CREATE TABLE scan_logs (
+CREATE TABLE IF NOT EXISTS scan_logs (
     id              INT UNSIGNED    NOT NULL AUTO_INCREMENT,
     event_id        INT UNSIGNED    NOT NULL,
     qr_token_id     INT UNSIGNED    NULL DEFAULT NULL,  -- NULL si token inconnu
@@ -190,7 +191,7 @@ CREATE TABLE scan_logs (
 -- -------------------------------------------------------------
 --  8. IMPORTS (traçabilité des imports CSV/Excel)
 -- -------------------------------------------------------------
-CREATE TABLE import_batches (
+CREATE TABLE IF NOT EXISTS import_batches (
     id              INT UNSIGNED    NOT NULL AUTO_INCREMENT,
     event_id        INT UNSIGNED    NOT NULL,
     imported_by     INT UNSIGNED    NOT NULL,
@@ -214,7 +215,7 @@ ALTER TABLE guests
 -- -------------------------------------------------------------
 --  9. JOURNAL D'AUDIT (RGPD — toutes actions admin)
 -- -------------------------------------------------------------
-CREATE TABLE audit_logs (
+CREATE TABLE IF NOT EXISTS audit_logs (
     id              BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     user_id         INT UNSIGNED    NULL DEFAULT NULL,  -- NULL si action système
     action          VARCHAR(100)    NOT NULL,            -- ex: 'guest.approved', 'qr.revoked'
@@ -232,12 +233,14 @@ CREATE TABLE audit_logs (
     CONSTRAINT fk_al_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+SET FOREIGN_KEY_CHECKS = 1;
+
 -- -------------------------------------------------------------
 --  10. DONNÉES INITIALES (super admin par défaut)
 -- -------------------------------------------------------------
--- Mot de passe à changer immédiatement en production
--- Hash bcrypt de 'ChangeMe2024!'
-INSERT INTO users (name, email, password_hash, role) VALUES (
+-- Email : admin@gestevent.solappli.com  |  Mot de passe : GestEvent2024!
+-- Changer le mot de passe immédiatement après la première connexion
+INSERT IGNORE INTO users (name, email, password_hash, role) VALUES (
     'Super Admin',
     'admin@gestevent.solappli.com',
     '$2y$12$6bGNgIRrKFBgXoTGORrcBubxTzXzCCQnhkSWECKODuF7fwYOoMclK',
