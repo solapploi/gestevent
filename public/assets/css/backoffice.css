@@ -1,1 +1,141 @@
-﻿/* backoffice.css — styles backoffice */
+/* ============================================================
+   Backoffice layout — GestEvent
+   ============================================================ */
+
+/* --- Top nav --- */
+nav {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    height: 56px;
+    padding: 0 1.5rem;
+    background: #1e1b4b;
+    box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-brand {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    letter-spacing: -.01em;
+    flex-shrink: 0;
+}
+.nav-brand:hover { text-decoration: none; color: #c7d2fe; }
+
+nav ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: .25rem;
+    flex: 1;
+}
+
+nav ul a {
+    display: block;
+    padding: .375rem .75rem;
+    color: #c7d2fe;
+    border-radius: var(--radius);
+    font-size: .9rem;
+    text-decoration: none;
+    transition: background .15s, color .15s;
+}
+nav ul a:hover,
+nav ul a.active {
+    background: rgba(255,255,255,.1);
+    color: #fff;
+    text-decoration: none;
+}
+
+.nav-user {
+    margin-left: auto;
+    font-size: .875rem;
+    color: #a5b4fc;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.nav-user a { color: #a5b4fc; }
+.nav-user a:hover { color: #fff; }
+
+/* --- Page layout --- */
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
+/* --- Page header --- */
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.75rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--color-border);
+}
+.page-header h1 { margin: 0; }
+
+/* --- Stats grid --- */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    box-shadow: var(--shadow);
+}
+.stat-card .stat-label {
+    font-size: .8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--color-text-muted);
+    margin-bottom: .25rem;
+}
+.stat-card .stat-value {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--color-text);
+    line-height: 1;
+}
+
+/* --- Empty state --- */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    color: var(--color-text-muted);
+}
+.empty-state p { margin: .5rem 0 1.5rem; }
+
+/* --- Form layout --- */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem 1.5rem;
+}
+.form-group { margin-bottom: 1.125rem; }
+.form-actions {
+    display: flex;
+    gap: .75rem;
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-border);
+}
+
+/* --- Responsive --- */
+@media (max-width: 640px) {
+    nav ul { display: none; }
+    main { padding: 1.25rem 1rem; }
+    .page-header { flex-direction: column; align-items: flex-start; gap: .75rem; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+}
